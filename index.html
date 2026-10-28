@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You ❤️</title>
+    <style>
+        :root {
+            --bg-color: #591b2c;
+            --card-bg: rgba(255, 255, 255, 0.15);
+            --text-main: #ffffff;
+            --accent: #ff4d6d;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2b0a16, #591b2c, #8a2a43);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating Hearts Background */
+        .hearts-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .heart-float {
+            position: absolute;
+            color: rgba(255, 77, 109, 0.3);
+            font-size: 20px;
+            animation: floatUp 10s linear infinite;
+            bottom: -50px;
+        }
+        @keyframes floatUp {
+            to { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+
+        .screen {
+            display: none;
+            width: 90%;
+            max-width: 400px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 40px 25px;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+            animation: fadeIn 0.5s ease-out forwards;
+            position: relative;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        h1, h2, h3 { margin: 10px 0; font-weight: 600; }
+        p { font-size: 1.1rem; line-height: 1.5; margin: 15px 0; }
+        
+        .cursive {
+            font-family: 'Brush Script MT', 'Comic Sans MS', cursive;
+            color: var(--accent);
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+            width: 80%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 77, 109, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: none;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            justify-content: center;
+        }
+        .btn-row .btn { width: 45%; padding: 15px 10px; font-size: 1rem;}
+
+        /* Loading Screen */
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Envelope */
+        .envelope-icon {
+            font-size: 80px;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Music Player */
+        .record {
+            width: 120px;
+            height: 120px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 5px solid var(--accent);
+            animation: spin 4s linear infinite;
+            margin: 20px auto;
+        }
+        .record::after {
+            content: '';
+            width: 30px;
+            height: 30px;
+            background: var(--bg-color);
+            border-radius: 50%;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Proposal Screen */
+        #btn-no {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.2);
+            transition: top 0.3s ease, left 0.3s ease;
+            z-index: 100;
+        }
+
+        /* Timer Screen */
+        .timer-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .time-box {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 12px;
+            min-width: 60px;
+        }
+        .time-val { font-size: 1.8rem; font-weight: bold; }
+        .time-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
+        
+    </style>
+</head>
+<body>
+
+    <div class="hearts-bg" id="hearts-container"></div>
+
+    <!-- 1. Loading Screen -->
+    <div id="stage-loading" class="screen active">
+        <h2 id="loading-text">Initializing Love.exe...</h2>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+    </div>
+
+    <!-- 2. Envelope Screen -->
+    <div id="stage-envelope" class="screen">
+        <h3>A LETTER ARRIVED ❤️</h3>
+        <div class="envelope-icon" onclick="openLetter()">💌</div>
+        <p style="font-size: 0.9rem; opacity: 0.8;">tap the envelope to open it</p>
+    </div>
+
+    <!-- 3. Letter Screens -->
+    <div id="stage-letter" class="screen">
+        <div class="cursive">for you</div>
+        <div id="letter-content"></div>
+        <button class="btn" id="letter-btn" onclick="nextLetterPage()">Next</button>
+    </div>
+
+    <!-- 4. Interactive Questions -->
+    <div id="stage-questions" class="screen">
+        <div class="cursive">❤️</div>
+        <h2 id="mini-q-text">Coffee Date?</h2>
+        <div class="btn-row">
+            <button class="btn" id="mini-btn-1" onclick="nextMiniQuestion()">YES</button>
+            <button class="btn btn-secondary" id="mini-btn-2" onclick="nextMiniQuestion()">OF COURSE</button>
+        </div>
+    </div>
+
+    <!-- 5. Music Player -->
+    <div id="stage-player" class="screen">
+        <div class="record"></div>
+        <h2>Us ❤️</h2>
+        <p style="opacity: 0.8; font-size: 0.9rem;">Our Story</p>
+        <p>Tum sirf meri favourite person nahi ho...<br>Tum meri favourite feeling ho.</p>
+        <div style="margin: 30px 0;">
+            <h3>So... Ek Question Puchu?</h3>
+            <button class="btn" onclick="showProposal()">Haan Pucho</button>
+        </div>
+    </div>
+
+    <!-- 6. The Proposal -->
+    <div id="stage-proposal" class="screen">
+        <h2>Kya Tum Meri<br>Girlfriend Banogi? ❤️</h2>
+        <div style="position: relative; width: 100%; height: 150px; margin-top: 20px;">
+            <button class="btn" id="btn-yes" style="position: absolute; left: 50%; transform: translateX(-50%); top: 0;" onclick="showSuccess()">YES</button>
+            <button class="btn btn-secondary" id="btn-no" style="left: 50%; transform: translateX(-50%); top: 70px;">SHAYAD NAHI</button>
+        </div>
+    </div>
+
+    <!-- 7. Success -->
+    <div id="stage-success" class="screen">
+        <h1 class="cursive" style="font-size: 2.5rem;">Yayyyyyyyy ❤️</h1>
+        <p><strong>Officially...</strong><br>Ab tum meri favourite notification ho.</p>
+        <p><strong>I Promise...</strong><br>Har smile ki wajah banne ki puri koshish karunga.</p>
+        <button class="btn" style="margin-top: 30px;" onclick="showTimer()">Welcome to Our Story</button>
+    </div>
+
+    <!-- 8. Timer -->
+    <div id="stage-timer" class="screen">
+        <h2>Welcome to Our Story ❤️</h2>
+        <p style="font-size: 0.8rem; letter-spacing: 2px;">TOGETHER SINCE</p>
+        <div class="timer-container">
+            <div class="time-box"><div class="time-val" id="t-days">0</div><div class="time-label">Days</div></div>
+            <div class="time-box"><div class="time-val" id="t-hours">0</div><div class="time-label">Hours</div></div>
+            <div class="time-box"><div class="time-val" id="t-mins">0</div><div class="time-label">Minutes</div></div>
+            <div class="time-box"><div class="time-val" id="t-secs">0</div><div class="time-label">Seconds</div></div>
+        </div>
+        <p class="cursive" style="margin-top: 30px; font-size: 1.5rem;">Some Love Stories Start With One Click. ❤️</p>
+    </div>
+
+    <!-- Confetti Script -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        // --- BACKGROUND HEARTS ---
+        function createHearts() {
+            const container = document.getElementById('hearts-container');
+            for(let i=0; i<15; i++) {
+                let heart = document.createElement('div');
+                heart.innerHTML = '❤️';
+                heart.className = 'heart-float';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                heart.style.animationDelay = (Math.random() * 5) + 's';
+                heart.style.fontSize = (Math.random() * 15 + 10) + 'px';
+                container.appendChild(heart);
+            }
+        }
+        createHearts();
+
+        // --- AUDIO SETUP ---
+        const bgMusic = new Audio('song.mp3');
+        bgMusic.loop = true;
+
+        // --- STAGE MANAGEMENT ---
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        // --- 1. LOADING LOGIC ---
+        const loadingTexts = [
+            "Initializing Love.exe...",
+            "Searching for the prettiest smile...",
+            "Found 1 Result ❤️"
+        ];
+        let loadStep = 0;
+        
+        setTimeout(() => updateLoader(), 1000);
+
+        function updateLoader() {
+            loadStep++;
+            const textEl = document.getElementById('loading-text');
+            const fillEl = document.getElementById('progress-fill');
+            
+            if(loadStep === 1) {
+                textEl.innerText = loadingTexts[1];
+                fillEl.style.width = "58%";
+                setTimeout(updateLoader, 2000);
+            } else if (loadStep === 2) {
+                textEl.innerText = loadingTexts[2];
+                fillEl.style.width = "100%";
+                setTimeout(() => showScreen('stage-envelope'), 1500);
+            }
+        }
+
+        // --- 2. ENVELOPE LOGIC ---
+        function openLetter() {
+            showScreen('stage-letter');
+            updateLetter();
+            // Try to play music on first interaction
+            bgMusic.play().catch(e => console.log("Audio waiting for stronger interaction"));
+        }
+
+        // --- 3. LETTER LOGIC ---
+        const letters = [
+            "<p>Hey Jaan...</p><p>Pata hai... Main ye sab normally bol nahi pata...</p><p>Lekin aaj dil ne kaha... Risk le le...</p><p>Kyuki kuch log baar baar nahi milte.</p>",
+            "<p>Jab bhi tum online aati ho...</p><p>Mera mood automatically better ho jata hai.</p>",
+            "<p>Tumhare messages...</p><p>Mere din ka favourite notification hote hain.</p>",
+            "<p>Honestly...</p><p>Tum meri life ki sabse pyari coincidence ho.</p>"
+        ];
+        let letterIdx = 0;
+
+        function updateLetter() {
+            document.getElementById('letter-content').innerHTML = letters[letterIdx];
+            document.getElementById('letter-btn').innerText = (letterIdx === letters.length - 1) ? "Continue" : "Next";
+        }
+
+        function nextLetterPage() {
+            letterIdx++;
+            if(letterIdx < letters.length) {
+                updateLetter();
+            } else {
+                showScreen('stage-questions');
+                updateMiniQuestion();
+            }
+        }
+
+        // --- 4. MINI QUESTIONS LOGIC ---
+        const miniQs = [
+            {q: "Coffee Date?", b1: "YES", b2: "OF COURSE"},
+            {q: "Long Walk?", b1: "YES", b2: "ALWAYS"},
+            {q: "Late Night Talks?", b1: "100%", b2: "FOREVER"}
+        ];
+        let mqIdx = 0;
+
+        function updateMiniQuestion() {
+            document.getElementById('mini-q-text').innerText = miniQs[mqIdx].q;
+            document.getElementById('mini-btn-1').innerText = miniQs[mqIdx].b1;
+            document.getElementById('mini-btn-2').innerText = miniQs[mqIdx].b2;
+        }
+
+        function nextMiniQuestion() {
+            mqIdx++;
+            if(mqIdx < miniQs.length) {
+                updateMiniQuestion();
+            } else {
+                showScreen('stage-player');
+                bgMusic.play(); // Definitely play here
+            }
+        }
+
+        // --- 5. PLAYER LOGIC ---
+        function showProposal() {
+            showScreen('stage-proposal');
+        }
+
+        // --- 6. PROPOSAL LOGIC (RUNAWAY BUTTON) ---
+        const noTexts = ["Please Soch Lo ❤️", "Nahi Na 🥺", "Sure?", "Ek Baar Aur 😭", "Maan Jao Na", "SHAYAD NAHI"];
+        let noIdx = 0;
+        const noBtn = document.getElementById('btn-no');
+
+        function moveNoBtn() {
+            noBtn.innerText = noTexts[noIdx % noTexts.length];
+            noIdx++;
+
+            const container = document.getElementById('stage-proposal');
+            const cRect = container.getBoundingClientRect();
+            const bRect = noBtn.getBoundingClientRect();
+
+            // Calculate safe boundaries within the card
+            const maxX = cRect.width - bRect.width - 40;
+            const maxY = 200; // Keep it within the bottom section of the card
+
+            const x = Math.random() * maxX - (maxX/2); // Offset from center
+            const y = Math.random() * maxY;
+
+            noBtn.style.transform = `translate(${x}px, ${y}px)`;
+        }
+
+        noBtn.addEventListener('mouseover', moveNoBtn);
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveNoBtn();
+        });
+
+        // --- 7. SUCCESS & CONFETTI ---
+        function showSuccess() {
+            showScreen('stage-success');
+            fireConfetti();
+            startDate = new Date().getTime(); // Set relationship start time
+        }
+
+        function fireConfetti() {
+            var duration = 5 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        // --- 8. TIMER LOGIC ---
+        let startDate;
+        function showTimer() {
+            showScreen('stage-timer');
+            setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            const now = new Date().getTime();
+            const distance = now - startDate;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('t-days').innerText = days;
+            document.getElementById('t-hours').innerText = hours;
+            document.getElementById('t-mins').innerText = minutes;
+            document.getElementById('t-secs').innerText = seconds;
+        }
+
+    </script>
+</body>
+</html>
